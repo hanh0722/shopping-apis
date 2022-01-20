@@ -24,7 +24,7 @@ app.use(ResolveErrorHandling);
 mongoose
   .connect(DATABASE_URL)
   .then((result) => {
-    app.listen(PORT);
+    app.listen(process.env.PORT || PORT);
   })
   .catch((err) => {
     console.log("CANNOT CONNECT SERVER");

@@ -23,7 +23,7 @@ app.use(errorHandling_1.default);
 mongoose_1.default
     .connect(url_connect_1.DATABASE_URL)
     .then(function (result) {
-    app.listen(url_connect_1.PORT);
+    app.listen(process.env.PORT || url_connect_1.PORT);
 })
     .catch(function (err) {
     console.log("CANNOT CONNECT SERVER");
