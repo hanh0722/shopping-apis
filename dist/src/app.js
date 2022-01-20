@@ -17,6 +17,9 @@ app.use(express_1.default.urlencoded({ extended: false }));
 app.use(express_1.default.json());
 app.use(express_1.default.static(path_1.default.join(__dirname, "images")));
 // define request middleware
+app.use('/', function (req, res, next) {
+    res.send('WORKING!');
+});
 app.use(route_1.PRODUCT_API, product_1.default);
 app.use(route_1.USER_API, user_1.default);
 app.use(errorHandling_1.default);

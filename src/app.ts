@@ -16,6 +16,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "images")));
 
 // define request middleware
+app.use('/', (req, res, next) => {
+  res.send('WORKING!');
+})
 app.use(PRODUCT_API, ProductRouter);
 app.use(USER_API, UserRouter);
 
