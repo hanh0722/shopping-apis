@@ -1,35 +1,20 @@
-import { ObjectId } from "mongoose";
-import { Discount } from "./discount";
-
 export interface PriceProduct {
-    discount?: number;
-    price_product: number;
-    time_discount?: number
+    price: number;
+    first_price?: number;
+    discount?: number
 }
 
-export interface PropertyProduct<T extends string | number> {
-    name: string,
-    values: Array<T>
+interface DetailProduct {
+    [props: string]: string;
 }
 
-export interface PropertiesProduct<T extends string | number> {
-    [props: string]: Array<T>
-}
-
-export interface InformationDetailProduct {
-    [props: string]: string
-}
-
-export interface ProductRequest<UProps extends string | number> {
-    name: string,
-    price?: PriceProduct,
-    description?: string,
-    images?: Array<string>,
-    quantity_stock: number,
-    information_detail_product: InformationDetailProduct,
-    discount_codes?: Array<Discount | ObjectId>,
-    properties?: Array<PropertiesProduct<UProps>>,
-    sold?: number,
-    rating?: number,
-    place_product?: string
+export interface ProductResponse {
+    name: string;
+    brand?: string;
+    price_product: PriceProduct;
+    quantity: number;
+    sold: number;
+    description?: string
+    detail_product: DetailProduct,
+    createdAt: string
 }

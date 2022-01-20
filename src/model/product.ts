@@ -1,62 +1,42 @@
-import mongoose from "mongoose";
-import { ProductRequest } from "../types/product";
+import { model, Schema } from "mongoose";
+import { ProductResponse } from "../types/product";
 
-const Schema = mongoose.Schema;
-
-const Product = new Schema<ProductRequest<string | number>>(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
+const ProductSchema = new Schema<ProductResponse>({
+  name: {
+    type: String,
+    required: true,
+  },
+  brand: {
+    type: String,
+  },
+  description: {
+    type: String,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
+  sold: {
+    type: Number,
+    default: 0,
+  },
+  price_product: {
     price: {
-      discount: {
-        type: Number,
-      },
-      price_product: {
-        type: Number,
-        required: true
-      },
-      time_discount: {
-        type: Number,
-      },
-    },
-    description: {
-      type: String,
-    },
-    images: [
-      {
-        type: String,
-      },
-    ],
-    quantity_stock: {
       type: Number,
       required: true,
     },
-    information_detail_product: {
-      type: Object,
-    },
-    discount_codes: {
-      type: Schema.Types.ObjectId,
-      ref: 'discount',
-    },
-    place_product: {
-      type: String,
-      required: true
-    },
-    sold: {
+    first_price: {
       type: Number,
-      default: 0,
     },
-    rating: {
+    discount: {
       type: Number,
-      default: 0,
     },
   },
-  {
-    timestamps: true,
-  }
-);
+  detail_product: {
+    type: Object
+  },
+}, {
+    timestamps: true
+});
 
-
-export default mongoose.model<ProductRequest<string | number>>('product', Product);
+export default model<ProductResponse>("product", ProductSchema);

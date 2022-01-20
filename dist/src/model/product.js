@@ -1,71 +1,41 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var mongoose_1 = __importDefault(require("mongoose"));
-var Schema = mongoose_1.default.Schema;
-var Product = new Schema({
+var mongoose_1 = require("mongoose");
+var ProductSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: true,
     },
-    price: {
-        discount: {
-            type: Number,
-        },
-        price_product: {
-            type: Number,
-            required: true
-        },
-        time_discount: {
-            type: Number,
-        },
+    brand: {
+        type: String,
     },
     description: {
         type: String,
     },
-    images: [
-        {
-            type: String,
-        },
-    ],
-    quantity_stock: {
+    quantity: {
         type: Number,
         required: true,
     },
-    information_detail_product: {
-        type: Object,
-    },
-    discount_codes: [
-        {
-            percent: {
-                type: Number,
-            },
-            min_bill: {
-                type: Number,
-            },
-            max_sale: {
-                type: Number,
-            },
-            quantity: {
-                type: Number,
-            },
-            expire_date: {
-                type: Number,
-                default: Date.now() + 30 * 24 * 60 * 60 * 1000
-            },
-        },
-    ],
     sold: {
         type: Number,
         default: 0,
     },
-    rating: {
-        type: Number,
-        default: 0,
+    price_product: {
+        price: {
+            type: Number,
+            required: true,
+        },
+        first_price: {
+            type: Number,
+        },
+        discount: {
+            type: Number,
+        },
+    },
+    detail_product: {
+        type: Object
     },
 }, {
-    timestamps: true,
+    timestamps: true
 });
-exports.default = mongoose_1.default.model('product', Product);
+exports.default = (0, mongoose_1.model)("product", ProductSchema);
