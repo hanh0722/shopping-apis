@@ -39,18 +39,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RegisterUser = void 0;
+exports.LoginUser = void 0;
 var express_validator_1 = require("express-validator");
+var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var user_1 = __importDefault(require("../model/user"));
-var define_1 = require("../../constants/define");
+var error_1 = require("../../utils/error");
 var handling_response_1 = require("../../utils/handling-response");
-var RegisterUser = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, username, password, phone, email, validateUser, hash, user, err_1;
+var auth_1 = require("../../constants/auth");
+var LoginUser = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, username, password, validateUser, user, passwordUser, passwordIsValid, timeExpired, token, err_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = req.body, username = _a.username, password = _a.password, phone = _a.phone, email = _a.email;
+                _a = req.body, username = _a.username, password = _a.password;
                 validateUser = (0, express_validator_1.validationResult)(req);
                 if (!validateUser.isEmpty()) {
                     return [2 /*return*/, (0, handling_response_1.responseErrorService)(res, 422, "not successfully", validateUser.array())];
@@ -58,19 +60,28 @@ var RegisterUser = function (req, res, next) { return __awaiter(void 0, void 0, 
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 4, , 5]);
-                return [4 /*yield*/, bcrypt_1.default.hash(password, define_1.SALT_ROUND)];
+                return [4 /*yield*/, user_1.default.findOne({ username: username })];
             case 2:
-                hash = _b.sent();
-                user = new user_1.default({
-                    username: username,
-                    password: hash,
-                    phone: phone,
-                    email: email
-                });
-                return [4 /*yield*/, user.save()];
+                user = _b.sent();
+                passwordUser = user.password;
+                return [4 /*yield*/, bcrypt_1.default.compare(password, passwordUser)];
             case 3:
-                _b.sent();
-                return [2 /*return*/, (0, handling_response_1.responseSuccessService)(res, 200, "successfully", user)];
+                passwordIsValid = _b.sent();
+                if (!passwordIsValid) {
+                    (0, error_1.createError)("password is not matched", 406);
+                }
+                timeExpired = Date.now() + 12 * 60 * 60 * 1000;
+                token = jsonwebtoken_1.default.sign({
+                    _id: user === null || user === void 0 ? void 0 : user._id,
+                    username: user === null || user === void 0 ? void 0 : user.username,
+                    email: user === null || user === void 0 ? void 0 : user.email
+                }, auth_1.SECRET_KEY, {
+                    expiresIn: timeExpired
+                });
+                return [2 /*return*/, (0, handling_response_1.responseSuccessService)(res, 200, 'successfully', {
+                        token: token,
+                        timeExpired: timeExpired
+                    })];
             case 4:
                 err_1 = _b.sent();
                 next(err_1);
@@ -79,4 +90,4 @@ var RegisterUser = function (req, res, next) { return __awaiter(void 0, void 0, 
         }
     });
 }); };
-exports.RegisterUser = RegisterUser;
+exports.LoginUser = LoginUser;

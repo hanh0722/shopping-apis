@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateRegister = void 0;
+exports.validateLogin = exports.validateRegister = void 0;
 var express_validator_1 = require("express-validator");
 var define_1 = require("../../constants/define");
 var user_1 = __importDefault(require("../model/user"));
@@ -51,16 +51,20 @@ var validateRegister = [
         .custom(function (username, _a) {
         var req = _a.req;
         return __awaiter(void 0, void 0, void 0, function () {
-            var user;
+            var user, phoneIsExisted;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0:
-                        console.log(req.body.email);
-                        return [4 /*yield*/, user_1.default.findOne({ username: username })];
+                    case 0: return [4 /*yield*/, user_1.default.findOne({ username: username })];
                     case 1:
                         user = _b.sent();
                         if (user) {
                             return [2 /*return*/, Promise.reject("User is existed")];
+                        }
+                        return [4 /*yield*/, user_1.default.findOne({ phone: req.body.phone })];
+                    case 2:
+                        phoneIsExisted = _b.sent();
+                        if (phoneIsExisted) {
+                            return [2 /*return*/, Promise.reject('Phone is existed, please use other mobile phone number')];
                         }
                         return [2 /*return*/, true];
                 }
@@ -104,6 +108,31 @@ var validateRegister = [
                 return [2 /*return*/, true];
             });
         });
-    }),
+    })
 ];
 exports.validateRegister = validateRegister;
+var validateLogin = [
+    (0, express_validator_1.body)("username")
+        .not()
+        .isEmpty()
+        .withMessage("Username is emptied!")
+        .custom(function (username, _a) {
+        var req = _a.req;
+        return __awaiter(void 0, void 0, void 0, function () {
+            var user;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, user_1.default.findOne({ username: username })];
+                    case 1:
+                        user = _b.sent();
+                        if (!user) {
+                            return [2 /*return*/, Promise.reject('user is not existed')];
+                        }
+                        ;
+                        return [2 /*return*/, true];
+                }
+            });
+        });
+    }),
+];
+exports.validateLogin = validateLogin;

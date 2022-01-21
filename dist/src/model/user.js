@@ -10,6 +10,10 @@ var UserSchema = new mongoose_1.Schema({
     email: {
         type: String,
         unique: true,
+        lowercase: true,
+        trim: true,
+        index: true,
+        sparse: true
     },
     password: {
         type: String,

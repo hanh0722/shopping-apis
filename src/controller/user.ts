@@ -7,7 +7,7 @@ import { SALT_ROUND } from "../../constants/define";
 import { responseErrorService, responseSuccessService } from "../../utils/handling-response";
 
 export const RegisterUser: RequestHandler = async (req, res, next) => {
-  const { username, password, phone } = req.body as UserRequest;
+  const { username, password, phone, email } = req.body as UserRequest;
   const validateUser = validationResult(req);
   if (!validateUser.isEmpty()) {
     return responseErrorService(
@@ -19,14 +19,16 @@ export const RegisterUser: RequestHandler = async (req, res, next) => {
   }
   try {
     const hash = await bcrypt.hash(password, SALT_ROUND);
+    // const index = User.
     const user = new User({
       username: username,
       password: hash,
       phone: phone,
+      email: email
     });
     await user.save();
     return responseSuccessService(res, 200, "successfully", user);
-  } catch (err) {
+  } catch (err: any) {
     next(err);
   }
 };

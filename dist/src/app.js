@@ -11,6 +11,7 @@ var url_connect_1 = require("../constants/url-connect");
 var route_1 = require("../constants/route");
 var product_1 = __importDefault(require("./routes/product"));
 var user_1 = __importDefault(require("./routes/user"));
+var auth_1 = __importDefault(require("./routes/auth"));
 var app = (0, express_1.default)();
 // define middleware using
 app.use(express_1.default.urlencoded({ extended: false }));
@@ -19,6 +20,7 @@ app.use(express_1.default.static(path_1.default.join(__dirname, "images")));
 // define request middleware
 app.use(route_1.PRODUCT_API, product_1.default);
 app.use(route_1.USER_API, user_1.default);
+app.use(route_1.AUTH_API, auth_1.default);
 app.use(errorHandling_1.default);
 mongoose_1.default
     .connect(url_connect_1.DATABASE_URL)

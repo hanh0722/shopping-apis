@@ -7,10 +7,13 @@ const validateRegister = [
     .isEmpty()
     .withMessage("username is emptied!")
     .custom(async (username: string, { req }) => {
-      console.log(req.body.email);
       const user = await User.findOne({ username: username });
       if (user) {
         return Promise.reject("User is existed");
+      }
+      const phoneIsExisted = await User.findOne({phone: req.body.phone});
+      if(phoneIsExisted) {
+        return Promise.reject('Phone is existed, please use other mobile phone number');
       }
       return true;
     }),
@@ -32,10 +35,25 @@ const validateRegister = [
     .custom(async (password: string, { req }) => {
       const passwordIsValid = password.match(REGEX_PASSWORD);
       if (!passwordIsValid) {
-        return Promise.reject("Password must have at least 6 characters contains 1 number, 1 lower character")
+        return Promise.reject(
+          "Password must have at least 6 characters contains 1 number, 1 lower character"
+        );
       }
+      return true;
+    })
+];
+
+const validateLogin = [
+  body("username")
+    .not()
+    .isEmpty()
+    .withMessage("Username is emptied!")
+    .custom(async (username: string, { req }) => {
+      const user = await User.findOne({username: username});
+      if (!user) {
+        return Promise.reject('user is not existed');
+      };
       return true;
     }),
 ];
-
-export { validateRegister };
+export { validateRegister, validateLogin };

@@ -6,9 +6,10 @@ const ResolveErrorHandling: ErrorRequestHandler<ErrorMessage> = (
   res,
   next
 ) => {
-  const message = err?.message || "Server Internal Error";
-  const code = err?.code || 500;
-  return res.status(code).json({
+  const message = err.message || "Server Internal Error";
+  const code = err.code || 500;
+  console.log(message);
+  res.status(code).json({
     message: message,
     code: code,
   });

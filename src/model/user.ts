@@ -10,6 +10,10 @@ const UserSchema = new Schema<UserRequest>({
     email: {
         type: String,
         unique: true,
+        lowercase: true,
+        trim: true,
+        index: true,
+        sparse: true
     },
     password: {
         type: String,
