@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "SENDGRID_KEY=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 SENDER=AnhNDH.B19CN022@stu.ptit.edu.vn node dist/src/app.js",
+    "start": "node dist/src/app.js",
     "start-dev": "nodemon dist/src/app.js"
   },
   "keywords": [],
