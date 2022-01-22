@@ -18,10 +18,7 @@ const validateRegister = [
       return true;
     }),
 
-  body("email").custom(async (email: string, { req }) => {
-    if (!email) {
-      return true;
-    }
+  body("email").isEmail().withMessage('Email is not valid').custom(async (email: string, { req }) => {
     const user = await User.findOne({ email: email });
     if (user) {
       return Promise.reject("email is used, please use other email");

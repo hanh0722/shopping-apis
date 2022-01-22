@@ -24,6 +24,19 @@ const UserSchema = new Schema<UserRequest>({
         required: true,
         unique: true
     },
+    is_validate_user: {
+        time_expire: {
+            type: Number,
+            default: Date.now() + 5 * 60 * 1000
+        },
+        otp: {
+            type: Number
+        },
+        is_checked: {
+            type: Boolean,
+            default: false
+        }
+    }
 })
 
 export default model<UserRequest>('user', UserSchema);

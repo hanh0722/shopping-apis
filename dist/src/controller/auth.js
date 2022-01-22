@@ -39,11 +39,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoginUser = void 0;
+exports.CheckOTPRegister = exports.LoginUser = void 0;
 var express_validator_1 = require("express-validator");
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
-var user_1 = __importDefault(require("../model/user"));
+var user_request_1 = require("../../utils/user-request");
 var error_1 = require("../../utils/error");
 var handling_response_1 = require("../../utils/handling-response");
 var auth_1 = require("../../constants/auth");
@@ -60,7 +60,7 @@ var LoginUser = function (req, res, next) { return __awaiter(void 0, void 0, voi
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 4, , 5]);
-                return [4 /*yield*/, user_1.default.findOne({ username: username })];
+                return [4 /*yield*/, (0, user_request_1.findUserByCondition)(auth_1.USERNAME, username, next)];
             case 2:
                 user = _b.sent();
                 passwordUser = user.password;
@@ -74,13 +74,13 @@ var LoginUser = function (req, res, next) { return __awaiter(void 0, void 0, voi
                 token = jsonwebtoken_1.default.sign({
                     _id: user === null || user === void 0 ? void 0 : user._id,
                     username: user === null || user === void 0 ? void 0 : user.username,
-                    email: user === null || user === void 0 ? void 0 : user.email
+                    email: user === null || user === void 0 ? void 0 : user.email,
                 }, auth_1.SECRET_KEY, {
-                    expiresIn: timeExpired
+                    expiresIn: timeExpired,
                 });
-                return [2 /*return*/, (0, handling_response_1.responseSuccessService)(res, 200, 'successfully', {
+                return [2 /*return*/, (0, handling_response_1.responseSuccessService)(res, 200, "successfully", {
                         token: token,
-                        timeExpired: timeExpired
+                        timeExpired: timeExpired,
                     })];
             case 4:
                 err_1 = _b.sent();
@@ -91,3 +91,49 @@ var LoginUser = function (req, res, next) { return __awaiter(void 0, void 0, voi
     });
 }); };
 exports.LoginUser = LoginUser;
+var CheckOTPRegister = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, otpUser, username, validation, user, _b, otp, is_checked, time_expire, err_2;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _a = req.body, otpUser = _a.otp, username = _a.username;
+                validation = (0, express_validator_1.validationResult)(req);
+                if (!validation.isEmpty()) {
+                    (0, handling_response_1.responseErrorService)(res, 422, "otp is not valid", validation.array());
+                }
+                _c.label = 1;
+            case 1:
+                _c.trys.push([1, 4, , 5]);
+                return [4 /*yield*/, (0, user_request_1.findUserByCondition)(auth_1.USERNAME, username, next)];
+            case 2:
+                user = _c.sent();
+                if (!user) {
+                    (0, error_1.createError)("user is not existed", 404);
+                }
+                _b = user.is_validate_user, otp = _b.otp, is_checked = _b.is_checked, time_expire = _b.time_expire;
+                if (is_checked) {
+                    (0, error_1.createError)("user is validated", 403);
+                }
+                else if (Date.now() > time_expire) {
+                    (0, error_1.createError)("otp is expired", 400);
+                }
+                else if (otp !== otpUser) {
+                    (0, error_1.createError)("otp is not matched", 422);
+                }
+                user.is_validate_user.otp = undefined;
+                user.is_validate_user.time_expire = undefined;
+                user.is_validate_user.is_checked = true;
+                return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.save())];
+            case 3:
+                _c.sent();
+                (0, handling_response_1.responseSuccessService)(res, 200, "successfully");
+                return [3 /*break*/, 5];
+            case 4:
+                err_2 = _c.sent();
+                next(err_2);
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); };
+exports.CheckOTPRegister = CheckOTPRegister;

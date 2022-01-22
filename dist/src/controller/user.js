@@ -45,8 +45,9 @@ var bcrypt_1 = __importDefault(require("bcrypt"));
 var user_1 = __importDefault(require("../model/user"));
 var define_1 = require("../../constants/define");
 var handling_response_1 = require("../../utils/handling-response");
+var send_email_1 = require("../../utils/send-email");
 var RegisterUser = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, username, password, phone, email, validateUser, hash, user, err_1;
+    var _a, username, password, phone, email, validateUser, hash, randomNumber, user, result, err_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -57,25 +58,36 @@ var RegisterUser = function (req, res, next) { return __awaiter(void 0, void 0, 
                 }
                 _b.label = 1;
             case 1:
-                _b.trys.push([1, 4, , 5]);
+                _b.trys.push([1, 5, , 6]);
                 return [4 /*yield*/, bcrypt_1.default.hash(password, define_1.SALT_ROUND)];
             case 2:
                 hash = _b.sent();
+                randomNumber = (0, send_email_1.generateOTP)();
                 user = new user_1.default({
                     username: username,
                     password: hash,
                     phone: phone,
-                    email: email
+                    email: email,
+                    is_validate_user: {
+                        time_expire: Date.now() + 5 * 60 * 1000,
+                        otp: randomNumber,
+                        is_checked: false,
+                    },
                 });
                 return [4 /*yield*/, user.save()];
             case 3:
                 _b.sent();
-                return [2 /*return*/, (0, handling_response_1.responseSuccessService)(res, 200, "successfully", user)];
+                return [4 /*yield*/, (0, send_email_1.sendMailToUser)(email, "<h1 style=\"text-align: center; color: red; padding: 10px\">Thank you for register our service</h1><p style=\"text-align: center\">Your OTP: " + randomNumber + "</p>", "OTP for register our service")];
             case 4:
+                result = _b.sent();
+                return [2 /*return*/, (0, handling_response_1.responseSuccessService)(res, 200, "successfully", {
+                        message: "OTP has been sent to email: " + email
+                    })];
+            case 5:
                 err_1 = _b.sent();
                 next(err_1);
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); };

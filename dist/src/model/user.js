@@ -24,5 +24,18 @@ var UserSchema = new mongoose_1.Schema({
         required: true,
         unique: true
     },
+    is_validate_user: {
+        time_expire: {
+            type: Number,
+            default: Date.now() + 5 * 60 * 1000
+        },
+        otp: {
+            type: Number
+        },
+        is_checked: {
+            type: Boolean,
+            default: false
+        }
+    }
 });
 exports.default = (0, mongoose_1.model)('user', UserSchema);

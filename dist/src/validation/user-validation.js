@@ -71,17 +71,13 @@ var validateRegister = [
             });
         });
     }),
-    (0, express_validator_1.body)("email").custom(function (email, _a) {
+    (0, express_validator_1.body)("email").isEmail().withMessage('Email is not valid').custom(function (email, _a) {
         var req = _a.req;
         return __awaiter(void 0, void 0, void 0, function () {
             var user;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0:
-                        if (!email) {
-                            return [2 /*return*/, true];
-                        }
-                        return [4 /*yield*/, user_1.default.findOne({ email: email })];
+                    case 0: return [4 /*yield*/, user_1.default.findOne({ email: email })];
                     case 1:
                         user = _b.sent();
                         if (user) {
